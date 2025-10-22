@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Welcome to EVR - Get started with your journey">
     <title>Welcome to EVR</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="welcome-card">
-            <h1 class="welcome-text">welcome to evr</h1>
-            <button class="next-button" id="nextButton">Next</button>
+    <main class="container">
+        <div class="welcome-card" role="region" aria-labelledby="welcome-heading">
+            <h1 class="welcome-text" id="welcome-heading">welcome to evr</h1>
+            <button class="next-button" id="nextButton" type="button" aria-label="Proceed to next step">Next</button>
         </div>
-    </div>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
