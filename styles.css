@@ -71,6 +71,20 @@ body {
     box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
 }
 
+.next-button:focus {
+    outline: 3px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+}
+
+.next-button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.next-button:focus-visible {
+    outline: 3px solid rgba(102, 126, 234, 0.5);
+    outline-offset: 2px;
+}
+
 @media (max-width: 600px) {
     .welcome-card {
         padding: 40px 30px;

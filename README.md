@@ -8,6 +8,8 @@ A simple, elegant welcome page for the EVR application.
 - Responsive layout that works on all devices
 - Interactive "Next" button with hover and click animations
 - Smooth fade-in animation on page load
+- Accessibility features (ARIA labels, keyboard navigation, focus states)
+- Proper error handling for robustness
 
 ## Files
 
