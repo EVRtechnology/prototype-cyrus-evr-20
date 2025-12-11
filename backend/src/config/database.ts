@@ -19,17 +19,14 @@ const poolConfig: PoolConfig = {
 };
 
 // Use DATABASE_URL if provided (for deployment environments)
-if (process.env.DATABASE_URL) {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  });
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    })
+  : new Pool(poolConfig);
 
-  export default pool;
-} else {
-  const pool = new Pool(poolConfig);
-  export default pool;
-}
+export default pool;
 
 // Test connection
 export const testConnection = async (): Promise<boolean> => {
