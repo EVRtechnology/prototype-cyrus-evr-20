@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EVR Billings Score - Facilitation and Voting App">
+    <title>EVR Billings Score</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar" id="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">EVR Billings Score</div>
+                <div class="nav-menu">
+                    <button class="nav-link active" data-view="home">Home</button>
+                    <button class="nav-link" data-view="facilitator">Facilitator</button>
+                    <button class="nav-link" data-view="participant">Participant</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home View -->
+            <div id="home-view" class="view active">
+                <div class="hero">
+                    <h1 class="hero-title">Welcome to EVR</h1>
+                    <p class="hero-subtitle">Real-time collaborative decision making with Billings Score</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" onclick="showView('facilitator')">
+                            Start as Facilitator
+                        </button>
+                        <button class="btn btn-secondary" onclick="showView('participant')">
+                            Join as Participant
+                        </button>
+                    </div>
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-indicator"></span>
+                        <span class="status-text">Checking connection...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilitator View -->
+            <div id="facilitator-view" class="view">
+                <div class="container">
+                    <h2 class="view-title">Facilitator Dashboard</h2>
+
+                    <!-- Session Creation -->
+                    <div class="card" id="session-create-card">
+                        <h3 class="card-title">Create New Session</h3>
+                        <form id="create-session-form" class="form">
+                            <div class="form-group">
+                                <label for="session-name">Session Name</label>
+                                <input
+                                    type="text"
+                                    id="session-name"
+                                    class="form-input"
+                                    placeholder="e.g., Team Meeting"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="facilitator-id">Your Facilitator ID</label>
+                                <input
+                                    type="text"
+                                    id="facilitator-id"
+                                    class="form-input"
+                                    placeholder="e.g., facilitator-001"
+                                    required
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Session</button>
+                        </form>
+                    </div>
+
+                    <!-- Active Session -->
+                    <div class="card hidden" id="session-active-card">
+                        <div class="session-header">
+                            <div>
+                                <h3 class="card-title" id="active-session-name">Session Name</h3>
+                                <div class="session-code">
+                                    Code: <strong id="active-session-code"></strong>
+                                    <button class="btn-icon" onclick="copySessionCode()" title="Copy code">📋</button>
+                                </div>
+                            </div>
+                            <div class="session-controls">
+                                <button class="btn btn-warning btn-sm" onclick="pauseSession()">Pause</button>
+                                <button class="btn btn-danger btn-sm" onclick="endSession()">End Session</button>
+                            </div>
+                        </div>
+
+                        <!-- Participants List -->
+                        <div class="participants-section">
+                            <h4>Participants (<span id="participant-count">0</span>)</h4>
+                            <div id="participants-list" class="participants-list"></div>
+                        </div>
+
+                        <!-- Session Stats -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-submitters">0</div>
+                                <div class="stat-label">Submitters</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-voters">0</div>
+                                <div class="stat-label">Voters</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-avg-score">0.50</div>
+                                <div class="stat-label">Avg Score</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participant View -->
+            <div id="participant-view" class="view">
+                <div class="container">
+                    <h2 class="view-title">Join Session</h2>
+
+                    <!-- Join Form -->
+                    <div class="card" id="join-card">
+                        <h3 class="card-title">Enter Session Details</h3>
+                        <form id="join-session-form" class="form">
+                            <div class="form-group">
+                                <label for="join-code">Session Code</label>
+                                <input
+                                    type="text"
+                                    id="join-code"
+                                    class="form-input"
+                                    placeholder="e.g., ABCD-1234"
+                                    pattern="[A-Z]{4}-[0-9]{4}"
+                                    required
+                                >
+                                <small class="form-help">Format: XXXX-1234</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="join-username">Your Name</label>
+                                <input
+                                    type="text"
+                                    id="join-username"
+                                    class="form-input"
+                                    placeholder="e.g., Alice"
+                                    required
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="join-role">Role</label>
+                                <select id="join-role" class="form-input" required>
+                                    <option value="voter">Voter</option>
+                                    <option value="submitter">Submitter</option>
+                                </select>
+                                <small class="form-help">Voters vote on suggestions, Submitters can submit and vote</small>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Join Session</button>
+                        </form>
+                    </div>
+
+                    <!-- Participant Active Session -->
+                    <div class="card hidden" id="participant-active-card">
+                        <div class="participant-header">
+                            <div>
+                                <h3 class="card-title" id="participant-session-name">Session Name</h3>
+                                <div class="participant-info">
+                                    <span id="participant-username"></span> •
+                                    <span id="participant-role"></span>
+                                </div>
+                            </div>
+                            <div class="score-display">
+                                <div class="score-label">Your Score</div>
+                                <div class="score-value" id="participant-score">0.50</div>
+                            </div>
+                        </div>
+
+                        <!-- Session Status -->
+                        <div class="session-status" id="session-status">
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+
+                        <!-- Other Participants -->
+                        <div class="participants-section">
+                            <h4>Other Participants (<span id="other-participant-count">0</span>)</h4>
+                            <div id="other-participants-list" class="participants-list"></div>
+                        </div>
+
+                        <!-- Leave Button -->
+                        <button class="btn btn-secondary" onclick="leaveSession()">Leave Session</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/socket.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/facilitator.js"></script>
+    <script src="js/participant.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
