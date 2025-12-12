@@ -14,8 +14,7 @@ The EVR Billings Score system enables groups to make collective decisions throug
 
 This is a monorepo containing:
 - **Backend**: Node.js/Express server with PostgreSQL, Redis, and Socket.io
-- **Facilitator Dashboard**: React web app for session management
-- **Participant App**: React PWA for mobile participation
+- **Frontend**: Vanilla JavaScript web application with facilitator and participant views
 - **Shared Types**: Common TypeScript definitions
 
 ## 🚀 Quick Start
@@ -27,37 +26,38 @@ This is a monorepo containing:
 
 ### Setup
 
-1. **Install dependencies**:
+1. **Start infrastructure**:
    ```bash
-   npm install
+   docker-compose up -d
    ```
 
 2. **Configure backend**:
    ```bash
    cp backend/.env.example backend/.env
-   # Edit backend/.env with your database and Redis credentials
+   # Edit backend/.env with database credentials and secrets
    ```
 
-3. **Set up database**:
+3. **Install and run migrations**:
    ```bash
-   # Create database
-   createdb evr_billings
-
-   # Run migrations
    cd backend
+   npm install
    npm run migrate:up
    ```
 
-4. **Start development**:
+4. **Start backend**:
    ```bash
-   # From root directory
    npm run dev
    ```
 
-This starts all services:
-- Backend: http://localhost:3000
-- Facilitator Dashboard: http://localhost:5173
-- Participant App: http://localhost:5174
+5. **Start frontend** (new terminal):
+   ```bash
+   cd frontend
+   python3 -m http.server 8080
+   ```
+
+Access at:
+- Backend API: http://localhost:3000
+- Frontend: http://localhost:8080
 
 ## 📚 Documentation
 

@@ -22,12 +22,7 @@ evr-redis       Up
 ## Step 2: Install Dependencies
 
 ```bash
-# Install backend dependencies
 cd backend
-npm install
-
-# Install shared types
-cd ../shared
 npm install
 ```
 
